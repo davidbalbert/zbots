@@ -3,7 +3,7 @@ class Message
 
   delegate :match, to: :body
 
-  def initialize(from, stream, subject, body)
+  def initialize(from:, stream:, subject:, body:)
     @from    = from
     @stream  = stream
     @subject = subject

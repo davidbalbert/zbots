@@ -13,7 +13,7 @@ class Dispatcher
     bot = Bot.where(watchword: watchword).first
 
     if bot
-      bot.handle(msg, destination)
+      bot.handle_cmd(msg, destination)
     end
 
     Bot.where(stream_all: true).each do |b|

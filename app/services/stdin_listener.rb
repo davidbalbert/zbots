@@ -47,10 +47,10 @@ class StdinListener
     end
 
     Message.new(
-      from,
-      stream,
-      subject,
-      s.chomp
+      from: from,
+      stream: stream,
+      subject: subject,
+      body: s.chomp
     )
   end
 end

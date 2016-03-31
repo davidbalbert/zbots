@@ -1,0 +1,230 @@
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+--
+-- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: -
+--
+
+CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
+
+
+--
+-- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: -
+--
+
+COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
+
+
+SET search_path = public, pg_catalog;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE ar_internal_metadata (
+    key character varying NOT NULL,
+    value character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: bots; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE bots (
+    id integer NOT NULL,
+    username character varying,
+    api_key character varying,
+    parent_id integer,
+    root boolean DEFAULT false NOT NULL,
+    stream_all boolean DEFAULT false NOT NULL,
+    watchword character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    description character varying
+);
+
+
+--
+-- Name: bots_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE bots_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: bots_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE bots_id_seq OWNED BY bots.id;
+
+
+--
+-- Name: commands; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE commands (
+    id integer NOT NULL,
+    bot_id integer,
+    name character varying,
+    builtin boolean DEFAULT false,
+    method_name character varying,
+    docs character varying,
+    body text,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: commands_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE commands_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: commands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE commands_id_seq OWNED BY commands.id;
+
+
+--
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE schema_migrations (
+    version character varying NOT NULL
+);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY bots ALTER COLUMN id SET DEFAULT nextval('bots_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commands ALTER COLUMN id SET DEFAULT nextval('commands_id_seq'::regclass);
+
+
+--
+-- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY ar_internal_metadata
+    ADD CONSTRAINT ar_internal_metadata_pkey PRIMARY KEY (key);
+
+
+--
+-- Name: bots_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY bots
+    ADD CONSTRAINT bots_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: commands_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY commands
+    ADD CONSTRAINT commands_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY schema_migrations
+    ADD CONSTRAINT schema_migrations_pkey PRIMARY KEY (version);
+
+
+--
+-- Name: index_bots_on_parent_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_parent_id ON bots USING btree (parent_id);
+
+
+--
+-- Name: index_bots_on_root; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_root ON bots USING btree (root);
+
+
+--
+-- Name: index_bots_on_stream_all; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_stream_all ON bots USING btree (stream_all);
+
+
+--
+-- Name: index_bots_on_watchword; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_watchword ON bots USING btree (watchword);
+
+
+--
+-- Name: index_commands_on_bot_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_commands_on_bot_id ON commands USING btree (bot_id);
+
+
+--
+-- Name: index_commands_on_bot_id_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_commands_on_bot_id_and_name ON commands USING btree (bot_id, name);
+
+
+--
+-- Name: fk_rails_24c0abbb52; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY commands
+    ADD CONSTRAINT fk_rails_24c0abbb52 FOREIGN KEY (bot_id) REFERENCES bots(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+SET search_path TO "$user",public;
+
+INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160331225053'), ('20160331230234');
+
+
