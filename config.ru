@@ -1,5 +1,8 @@
 # This file is used by Rack-based servers to start the application.
 
+$stdout.sync = true
+$stderr.sync = true
+
 require ::File.expand_path('../config/environment', __FILE__)
 
 # Action Cable requires that all classes are loaded in advance
