@@ -54,8 +54,7 @@ CREATE TABLE bots (
     stream_all boolean DEFAULT false NOT NULL,
     watchword character varying,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    description character varying
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -79,42 +78,6 @@ ALTER SEQUENCE bots_id_seq OWNED BY bots.id;
 
 
 --
--- Name: commands; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE commands (
-    id integer NOT NULL,
-    bot_id integer,
-    name character varying,
-    builtin boolean DEFAULT false,
-    method_name character varying,
-    docs character varying,
-    body text,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: commands_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE commands_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: commands_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE commands_id_seq OWNED BY commands.id;
-
-
---
 -- Name: schema_migrations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -131,13 +94,6 @@ ALTER TABLE ONLY bots ALTER COLUMN id SET DEFAULT nextval('bots_id_seq'::regclas
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY commands ALTER COLUMN id SET DEFAULT nextval('commands_id_seq'::regclass);
-
-
---
 -- Name: ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -151,14 +107,6 @@ ALTER TABLE ONLY ar_internal_metadata
 
 ALTER TABLE ONLY bots
     ADD CONSTRAINT bots_pkey PRIMARY KEY (id);
-
-
---
--- Name: commands_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
---
-
-ALTER TABLE ONLY commands
-    ADD CONSTRAINT commands_pkey PRIMARY KEY (id);
 
 
 --
@@ -198,33 +146,11 @@ CREATE INDEX index_bots_on_watchword ON bots USING btree (watchword);
 
 
 --
--- Name: index_commands_on_bot_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_commands_on_bot_id ON commands USING btree (bot_id);
-
-
---
--- Name: index_commands_on_bot_id_and_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_commands_on_bot_id_and_name ON commands USING btree (bot_id, name);
-
-
---
--- Name: fk_rails_24c0abbb52; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY commands
-    ADD CONSTRAINT fk_rails_24c0abbb52 FOREIGN KEY (bot_id) REFERENCES bots(id);
-
-
---
 -- PostgreSQL database dump complete
 --
 
 SET search_path TO "$user",public;
 
-INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160331225053'), ('20160331230234');
+INSERT INTO schema_migrations (version) VALUES ('20160331193612');
 
 
