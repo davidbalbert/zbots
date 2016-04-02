@@ -1,5 +1,5 @@
 class StdinListener
-  attr_reader :running, :dispatcher
+  attr_reader :dispatcher
 
   def initialize
     @dispatcher = Dispatcher.new(StdoutDestination.new)

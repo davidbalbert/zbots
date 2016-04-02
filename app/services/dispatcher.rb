@@ -6,18 +6,8 @@ class Dispatcher
   end
 
   def dispatch(msg)
-    if md = msg.match(/\A(\w+)/)
-      watchword = md[1]
-    end
-
-    bot = Bot.where(watchword: watchword).first
-
-    if bot
-      bot.handle_cmd(msg, destination)
-    end
-
-    Bot.where(stream_all: true).each do |b|
-      b.handle(msg, destination)
+    Bot.all.each do |b|
+      destination.send(b.call(msg))
     end
   end
 end

@@ -51,8 +51,9 @@ CREATE TABLE bots (
     api_key character varying,
     parent_id integer,
     root boolean DEFAULT false NOT NULL,
-    stream_all boolean DEFAULT false NOT NULL,
-    watchword character varying,
+    copy boolean DEFAULT false NOT NULL,
+    state jsonb DEFAULT '{}'::jsonb NOT NULL,
+    code text,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
@@ -118,6 +119,13 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
+-- Name: index_bots_on_copy; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_copy ON bots USING btree (copy);
+
+
+--
 -- Name: index_bots_on_parent_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -129,20 +137,6 @@ CREATE INDEX index_bots_on_parent_id ON bots USING btree (parent_id);
 --
 
 CREATE INDEX index_bots_on_root ON bots USING btree (root);
-
-
---
--- Name: index_bots_on_stream_all; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_bots_on_stream_all ON bots USING btree (stream_all);
-
-
---
--- Name: index_bots_on_watchword; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_bots_on_watchword ON bots USING btree (watchword);
 
 
 --

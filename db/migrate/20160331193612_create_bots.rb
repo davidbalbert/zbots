@@ -5,14 +5,14 @@ class CreateBots < ActiveRecord::Migration[5.0]
       t.string :api_key
       t.references :parent, index: true
       t.boolean :root, null: false, default: false
-      t.boolean :stream_all, null: false, default: false
-      t.string :watchword
+      t.boolean :copy, null: false, default: false
+      t.jsonb :state, null: false, default: {}
+      t.text :code
 
       t.timestamps
     end
 
-    add_index :bots, :watchword
     add_index :bots, :root
-    add_index :bots, :stream_all
+    add_index :bots, :copy
   end
 end

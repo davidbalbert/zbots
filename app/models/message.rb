@@ -1,23 +1,50 @@
+require 'json'
+
 class Message
-  attr_reader :from, :stream, :subject, :body
+  attr_reader :from, :stream, :subject, :body, :state
 
-  delegate :match, to: :body
+  def self.parse(s)
 
-  def initialize(from:, stream:, subject:, body:)
+  end
+
+  def initialize(from:, stream:, subject:, body:, state: nil)
     @from    = from
     @stream  = stream
     @subject = subject
     @body    = body
+    @state   = state
+  end
+
+  def with_state(state)
+    Message.new(
+      from: from,
+      stream: stream,
+      subject: subject,
+      body: body,
+      state: state
+    )
   end
 
   def to_s
     <<~END
-      From: #{from}
-      Type: Message
-      Stream: #{stream}
-      Subject #{subject}
+      #{headers}
 
       #{body}
     END
+  end
+
+  private
+
+  def headers
+    h = {
+      "Type" => "Message",
+      "From" => from,
+      "Stream" => stream,
+      "Subject" => subject,
+    }
+
+    h["State"] = JSON.generate(state) if state
+
+    h.map { |k, v| "#{k}: #{v}" }.join("\n")
   end
 end
