@@ -2,12 +2,11 @@ class CopyBot < Bot
   def self.update_state
     copy = all.first!
 
-    copy.update!(state: state_from_db)
+    copy.update!(state: copy.state.merge(state_from_db))
   end
 
   def self.state_from_db
     {
-      "watchword" => "copybot",
       "bots" => Bot.all.map { |b| {"name" => b.name, "parent" => b.parent_name} },
     }
   end
