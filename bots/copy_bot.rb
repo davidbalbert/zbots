@@ -122,6 +122,7 @@ end
 
 # state:
 # {
+#   watchword: "copybot",
 #   bots: [
 #     {
 #       name: "EmptyBot",
@@ -134,8 +135,6 @@ end
 #     # etc.
 #   ],
 # }
-
-WATCHWORD = "copybot"
 
 def_command "help", "Show this message", -> do
   resp = ""
@@ -151,9 +150,14 @@ end
 
 def_command "copy", "Copy a bot", ->(old_name, new_name) do
   old = state["bots"].find { |b| b["name"] == old_name }
+  new = state["bots"].find { |b| b["name"] == new_name }
 
   if old.nil?
     return "No bot named #{old_name}"
+  end
+
+  if new
+    return "There is already a bot named #{new_name}"
   end
 
   state["bots"] << {"name" => new_name, "parent" => old_name}
@@ -161,5 +165,9 @@ def_command "copy", "Copy a bot", ->(old_name, new_name) do
   "Copying #{old_name} to #{new_name}..."
 end
 
+
 parse_message!
+
+WATCHWORD = state["watchword"]
+
 run_command

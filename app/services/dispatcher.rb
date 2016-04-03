@@ -7,7 +7,7 @@ class Dispatcher
 
   def dispatch(msg)
     Bot.all.each do |b|
-      destination.send(b.call(msg))
+      b.call(msg, destination)
     end
   end
 end

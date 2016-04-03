@@ -51,12 +51,13 @@ CREATE TABLE bots (
     api_key character varying,
     parent_id integer,
     root boolean DEFAULT false NOT NULL,
-    copy boolean DEFAULT false NOT NULL,
     state jsonb DEFAULT '{}'::jsonb NOT NULL,
     code text DEFAULT ''::text NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
-    name character varying
+    name character varying,
+    type character varying DEFAULT 'Bot'::character varying NOT NULL,
+    parent_name character varying
 );
 
 
@@ -120,13 +121,6 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
--- Name: index_bots_on_copy; Type: INDEX; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE INDEX index_bots_on_copy ON bots USING btree (copy);
-
-
---
 -- Name: index_bots_on_parent_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -146,6 +140,6 @@ CREATE INDEX index_bots_on_root ON bots USING btree (root);
 
 SET search_path TO "$user",public;
 
-INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160403212337');
+INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160403212337'), ('20160403220818'), ('20160403221740');
 
 

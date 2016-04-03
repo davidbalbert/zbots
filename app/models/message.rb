@@ -39,7 +39,7 @@ class Message
     end
 
     new(
-      from: bot.username,
+      from: bot.name,
       stream: h["Stream"],
       subject: h["Subject"],
       body: body,

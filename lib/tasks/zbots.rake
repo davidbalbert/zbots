@@ -9,11 +9,17 @@ namespace :zbots do
     ruby.update!(username: 'asdf', api_key: 'asdf', code: File.read("bots/ruby_bot.rb"))
 
     rubycmd = ruby.children.where(name: "RubyCommandBot").first_or_initialize
-    rubycmd.update!(username: 'asdf', api_key: 'asdf', code: File.read("bots/ruby_command_bot.rb"))
+    rubycmd.update!(
+      username: 'asdf',
+      api_key: 'asdf',
+      code: File.read("bots/ruby_command_bot.rb"),
+      state: {
+        "watchword" => "cmdbot"
+      },
+    )
 
-    copy = rubycmd.children.where(name: "CopyBot", copy: true).first_or_initialize
+    copy = rubycmd.children.where(name: "CopyBot", type: "CopyBot").first_or_initialize
     copy.update!(username: 'asdf', api_key: 'asdf', code: File.read("bots/copy_bot.rb"))
-
-    Bot.update_state
+    CopyBot.update_state
   end
 end

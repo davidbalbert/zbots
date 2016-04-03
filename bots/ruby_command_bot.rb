@@ -120,8 +120,6 @@ end
 
 #################################################
 
-WATCHWORD = "cmdbot"
-
 def_command "help", "Show this message", -> do
   resp = ""
 
@@ -139,5 +137,9 @@ def_command "hello", "Say hello", -> do
   "Hi There"
 end
 
+
 parse_message!
+
+WATCHWORD = state["watchword"]
+
 run_command
