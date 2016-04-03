@@ -121,6 +121,13 @@ ALTER TABLE ONLY schema_migrations
 
 
 --
+-- Name: index_bots_on_name; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_bots_on_name ON bots USING btree (name);
+
+
+--
 -- Name: index_bots_on_parent_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -140,6 +147,6 @@ CREATE INDEX index_bots_on_root ON bots USING btree (root);
 
 SET search_path TO "$user",public;
 
-INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160403212337'), ('20160403220818'), ('20160403221740');
+INSERT INTO schema_migrations (version) VALUES ('20160331193612'), ('20160403212337'), ('20160403220818'), ('20160403221740'), ('20160403223438');
 
 
