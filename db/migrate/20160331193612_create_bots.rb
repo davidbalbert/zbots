@@ -7,7 +7,7 @@ class CreateBots < ActiveRecord::Migration[5.0]
       t.boolean :root, null: false, default: false
       t.boolean :copy, null: false, default: false
       t.jsonb :state, null: false, default: {}
-      t.text :code
+      t.text :code, null: false, default: ""
 
       t.timestamps
     end
