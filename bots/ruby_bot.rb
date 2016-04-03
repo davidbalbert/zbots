@@ -49,6 +49,6 @@ end
 
 parse_message!
 
-send_message(
-  body: "Hello from Ruby!"
-)
+# To send a response:
+#
+# send_message(body: "Hello, world!")
