@@ -1,3 +1,5 @@
+require 'tempfile'
+
 class Bot < ApplicationRecord
   belongs_to :parent, class_name: 'Bot', optional: true
   has_many :children, class_name: 'Bot', foreign_key: :parent_id
@@ -8,10 +10,15 @@ class Bot < ApplicationRecord
   validate :only_one_copy
 
   def call(msg)
-    IO.popen("ruby -e '#{code}'", "r+") do |pipe|
-      pipe.write(msg.to_s)
+    Tempfile.create('zbots') do |f|
+      f.write(code)
+      f.close
 
-      pipe.read
+      IO.popen("ruby #{f.path}", "r+") do |pipe|
+        pipe.write(msg.to_s)
+
+        pipe.read
+      end
     end
   end
 
