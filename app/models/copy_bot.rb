@@ -34,7 +34,6 @@ class CopyBot < Bot
     if set_state
       bot = Bot.where(name: set_state["name"]).first!
 
-
       begin
         state = JSON.parse(set_state["state"])
       rescue JSON::ParserError => e
@@ -47,7 +46,6 @@ class CopyBot < Bot
     end
 
     to_create = new_bots - old_bots
-    # to_destroy = old_bots - new_bots
 
     to_create.each do |bot|
       parent = Bot.where(name: bot["parent"]).first!
