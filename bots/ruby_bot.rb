@@ -3,8 +3,8 @@ require 'json'
 def parse_message!
   s = STDIN.read
 
-  headers, body = s.split("\n\n")
-  h = headers.split("\n").map { |header| header.split(": ") }.to_h
+  headers, body = s.split("\n\n", 2)
+  h = headers.split("\n").map { |header| header.split(": ", 2) }.to_h
 
   state = JSON.parse(h["State"])
 
@@ -15,12 +15,20 @@ def parse_message!
   [$headers, $state, $body]
 end
 
+def headers
+  $headers
+end
+
 def stream
-  $headers["Stream"]
+  headers["Stream"]
 end
 
 def subject
-  $headers["Subject"]
+  headers["Subject"]
+end
+
+def body
+  $body
 end
 
 def state
@@ -47,7 +55,7 @@ end
 
 #################################################
 
-parse_message!
+# parse_message!
 
 # To send a response:
 #

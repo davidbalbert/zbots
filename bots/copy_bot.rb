@@ -3,8 +3,8 @@ require 'json'
 def parse_message!
   s = STDIN.read
 
-  headers, body = s.split("\n\n")
-  h = headers.split("\n").map { |header| header.split(": ") }.to_h
+  headers, body = s.split("\n\n", 2)
+  h = headers.split("\n").map { |header| header.split(": ", 2) }.to_h
 
   state = JSON.parse(h["State"])
 
@@ -65,7 +65,7 @@ def parse_command!
   if pm?
     $command = words[0]
     $args = words[1..-1]
-  elsif words[0] == WATCHWORD
+  elsif WATCHWORD && words[0] == WATCHWORD
     $command = words[1]
     $args = words[2..-1]
   else
@@ -109,7 +109,7 @@ def run_command
     if block.parameters.size == args.size
       resp = block.call(*args)
     else
-      resp = "Wrong number of arguments for \"command\" (got #{args.size}, expected #{block.parameters.size})"
+      resp = "Wrong number of arguments for \"#{command}\" (got #{args.size}, expected #{block.parameters.size})"
     end
 
     send_message(body: resp)
@@ -123,6 +123,13 @@ end
 # state:
 # {
 #   watchword: "copybot",
+#
+#   # set_code is not persisted
+#   set_code: {
+#     name: "MyBot",
+#     code: "...",
+#   }
+#
 #   bots: [
 #     {
 #       name: "EmptyBot",
@@ -148,6 +155,7 @@ def_command "help", "Show this message", -> do
   resp
 end
 
+
 def_command "copy", "Copy a bot", ->(old_name, new_name) do
   old = state["bots"].find { |b| b["name"] == old_name }
   new = state["bots"].find { |b| b["name"] == new_name }
@@ -163,6 +171,30 @@ def_command "copy", "Copy a bot", ->(old_name, new_name) do
   state["bots"] << {"name" => new_name, "parent" => old_name}
 
   "Copying #{old_name} to #{new_name}..."
+end
+
+
+CODE_REGEXP = /^```\w*\n(.*?)^```/m
+
+def_command "setcode", "Set a bot's code", ->(bot_name) do
+  bot = state["bots"].find { |b| b["name"] == bot_name }
+
+  if bot.nil?
+    return "No bot named #{bot_name}"
+  end
+
+  md = body.match(CODE_REGEXP)
+
+  if md.nil?
+    return "Send the code you want to set inside fenced code blocks"
+  end
+
+  state["set_code"] = {
+    name: bot_name,
+    code: md[1],
+  }
+
+  "Setting code for #{bot_name}..."
 end
 
 

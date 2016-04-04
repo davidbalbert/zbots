@@ -8,7 +8,7 @@ class Message
   def self.parse(s, bot)
     return if s.blank?
 
-    headers, body = s.split("\n\n")
+    headers, body = s.split("\n\n", 2)
 
     if headers.blank?
       raise ParseError, "Can't have headers without a body"
@@ -16,7 +16,7 @@ class Message
       raise ParseError, "Can't have body without headers"
     end
 
-    h = headers.split("\n").map { |header| header.split(": ") }.to_h
+    h = headers.split("\n").map { |header| header.split(": ", 2) }.to_h
 
     if h["Type"].blank? || h["Type"] != "Message"
       raise ParseError, "Needs valid Type"

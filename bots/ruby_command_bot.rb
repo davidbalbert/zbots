@@ -3,8 +3,8 @@ require 'json'
 def parse_message!
   s = STDIN.read
 
-  headers, body = s.split("\n\n")
-  h = headers.split("\n").map { |header| header.split(": ") }.to_h
+  headers, body = s.split("\n\n", 2)
+  h = headers.split("\n").map { |header| header.split(": ", 2) }.to_h
 
   state = JSON.parse(h["State"])
 
@@ -65,7 +65,7 @@ def parse_command!
   if pm?
     $command = words[0]
     $args = words[1..-1]
-  elsif words[0] == WATCHWORD
+  elsif WATCHWORD && words[0] == WATCHWORD
     $command = words[1]
     $args = words[2..-1]
   else
@@ -109,7 +109,7 @@ def run_command
     if block.parameters.size == args.size
       resp = block.call(*args)
     else
-      resp = "Wrong number of arguments for \"command\" (got #{args.size}, expected #{block.parameters.size})"
+      resp = "Wrong number of arguments for \"#{command}\" (got #{args.size}, expected #{block.parameters.size})"
     end
 
     send_message(body: resp)

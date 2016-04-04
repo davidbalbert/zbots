@@ -7,15 +7,36 @@ class CopyBot < Bot
 
   def self.state_from_db
     {
-      "bots" => Bot.all.map { |b| {"name" => b.name, "parent" => b.parent_name} },
+      "bots" => Bot.all.map { |b| {"name" => b.name, "parent" => b.parent} },
     }
   end
 
-  def call(msg, destination)
-    super
+  attr_accessor :set_code, :set_state
 
+  private
+
+  def before_state_save(msg, destination)
+    self.set_code = state.delete("set_code")
+    self.set_state = state.delete("set_state")
+  end
+
+  def after_send(msg, destination)
     old_bots = self.class.state_from_db["bots"]
     new_bots = state["bots"]
+
+    if set_code
+      bot = Bot.where(name: set_code["name"]).first!
+      bot.update!(code: set_code["code"])
+
+      reply(msg, "Updated code for #{bot.name}!", destination)
+    end
+
+    if set_state
+      bot = Bot.where(name: set_state["name"]).first!
+      bot.update!(set_state["state"])
+
+      reply(msg, "Updated state for #{bot.name}!", destination)
+    end
 
     to_create = new_bots - old_bots
     # to_destroy = old_bots - new_bots
@@ -25,21 +46,25 @@ class CopyBot < Bot
 
       Bot.create!(
         name: bot["name"],
-        parent: parent,
+        parent: parent.name,
         username: 'asdf',
         api_key: 'asdf',
         code: parent.code,
         state: parent.state
       )
 
-      resp = Message.new(
-        from: name,
-        stream: msg.stream,
-        subject: msg.subject,
-        body: "Created #{bot["name"]}!",
-      )
-
-      destination.send(resp)
+      reply(msg, "Created #{bot["name"]}!", destination)
     end
+  end
+
+  def reply(msg, reply, destination)
+    resp = Message.new(
+      from: name,
+      stream: msg.stream,
+      subject: msg.subject,
+      body: reply
+    )
+
+    destination.send(resp)
   end
 end
