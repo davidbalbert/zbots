@@ -198,6 +198,28 @@ def_command "setcode", "Set a bot's code", ->(bot_name) do
 end
 
 
+def_command "setstate", "Set a bot's state", ->(bot_name) do
+  bot = state["bots"].find { |b| b["name"] == bot_name }
+
+  if bot.nil?
+    return "No bot named #{bot_name}"
+  end
+
+  md = body.match(CODE_REGEXP)
+
+  if md.nil?
+    return "Send the state you want to set inside fenced code blocks"
+  end
+
+  state["set_state"] = {
+    name: bot_name,
+    state: md[1],
+  }
+
+  "Setting state for #{bot_name}..."
+end
+
+
 parse_message!
 
 WATCHWORD = state["watchword"]

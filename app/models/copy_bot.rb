@@ -33,8 +33,16 @@ class CopyBot < Bot
 
     if set_state
       bot = Bot.where(name: set_state["name"]).first!
-      bot.update!(set_state["state"])
 
+
+      begin
+        state = JSON.parse(set_state["state"])
+      rescue JSON::ParserError => e
+        reply(msg, "JSON parse error: \n#{e.message}", destination)
+        return
+      end
+
+      bot.update!(state: JSON.parse(set_state["state"]))
       reply(msg, "Updated state for #{bot.name}!", destination)
     end
 
