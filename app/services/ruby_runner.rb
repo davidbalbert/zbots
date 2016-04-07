@@ -13,8 +13,8 @@ class RubyRunner
       f.write(code)
       f.close
 
-      IO.popen("ruby #{f.path}", "r+") do |pipe|
-        pipe.write(message.to_s)
+      IO.popen(message.headers, "ruby #{f.path}", "r+") do |pipe|
+        pipe.write(message.body)
 
         pipe.close_write
 

@@ -1,41 +1,32 @@
 require 'json'
 
-def parse_message!
-  s = STDIN.read
-
-  headers, body = s.split("\n\n", 2)
-  h = headers.split("\n").map { |header| header.split(": ", 2) }.to_h
-
-  state = JSON.parse(h["State"])
-
-  $headers = h
-  $state = state
-  $body = body
-
-  [$headers, $state, $body]
+def from
+  ENV["From"]
 end
 
-def headers
-  $headers
+def type
+  ENV["Type"]
 end
 
 def stream
-  headers["Stream"]
+  ENV["Stream"]
 end
 
 def subject
-  headers["Subject"]
+  ENV["Subject"]
 end
 
 def body
-  $body
+  return $body if defined? $body
+  $body = STDIN.read
 end
 
 def state
-  $state
+  return $state if defined? $state
+  $state = ENV["State"] && JSON.parse(ENV["State"])
 end
 
-def send_message(stream: $headers["Stream"], subject: $headers["Subject"], state: $state, body:)
+def send_message(stream: stream(), subject: subject(), state: state(), body:)
   h = {
     "Type" => "Message",
     "Stream" => stream,
@@ -54,11 +45,18 @@ def send_message(stream: $headers["Stream"], subject: $headers["Subject"], state
 end
 
 def pm?
-  headers["Type"] == "PM"
+  type == "PM"
 end
 
 def parse_command!
   cmdline = body.split("\n").first
+
+  if cmdline.nil?
+    $command = nil
+    $args = []
+
+    return nil
+  end
 
   words = cmdline.split(/\s+/)
 
@@ -137,9 +135,7 @@ def_command "hello", "Say hello", -> do
   "Hi There"
 end
 
-
-parse_message!
+#################################################
 
 WATCHWORD = state["watchword"]
-
 run_command
