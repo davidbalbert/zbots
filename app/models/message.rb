@@ -67,24 +67,28 @@ class Message
 
   def to_s
     <<~END
-      #{headers}
+      #{header_string}
 
       #{body}
     END
   end
 
-  private
-
   def headers
     h = {
-      "Type" => "Message",
       "From" => from,
+      "Type" => "Message",
       "Stream" => stream,
       "Subject" => subject,
     }
 
     h["State"] = JSON.generate(state) if state
 
-    h.map { |k, v| "#{k}: #{v}" }.join("\n")
+    h
+  end
+
+  private
+
+  def header_string
+    headers.map { |k, v| "#{k}: #{v}" }.join("\n")
   end
 end

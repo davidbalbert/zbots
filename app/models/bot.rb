@@ -31,18 +31,7 @@ class Bot < ApplicationRecord
   end
 
   def run(msg)
-    Tempfile.create('zbots') do |f|
-      f.write(code)
-      f.close
-
-      IO.popen("ruby #{f.path}", "r+") do |pipe|
-        pipe.write(msg.with_state(state).to_s)
-
-        pipe.close_write
-
-        pipe.read
-      end
-    end
+    RubyRunner.new(msg.with_state(state), code).run
   end
 
   def only_one_copy
