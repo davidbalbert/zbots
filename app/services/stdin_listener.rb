@@ -11,8 +11,8 @@ class StdinListener
 
   def listen
     loop do
-      msg = read_message
-      dispatcher.dispatch(msg)
+      message = read_message
+      dispatcher.dispatch(message)
     end
   end
 

@@ -1,6 +1,10 @@
 desc "Listens to incomming Zulip messages and responds to them"
 task listen: :environment do
-  raise 'Not implemented!'
+  puts "Zbots is listening..."
+  puts
+
+  listener = ZulipListener.new
+  listener.listen
 end
 
 namespace :listen do

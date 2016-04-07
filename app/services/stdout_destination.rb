@@ -1,7 +1,7 @@
 class StdoutDestination
-  def send(msg)
-    if msg.present?
-      puts msg.to_s
+  def send(message)
+    if message.present?
+      puts message.to_s
       puts
     end
   end
